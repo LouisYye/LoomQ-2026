@@ -7,4 +7,5 @@ qiskit==2.5.2
 amazon-braket-sdk==1.110.1
 amazon-braket-default-simulator==1.33.0
 amazon-braket-schemas==1.28.0
+pyqpanda==3.8.5
 pytest==9.1.1

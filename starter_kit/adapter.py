@@ -9,11 +9,15 @@ from typing import Any, Dict, List, Tuple
 
 try:
     from .backend.braket import run_braket
+    from .backend.originq import run_originq
     from .emitters.braket import emit_braket
+    from .emitters.originq import emit_originq
     from .parser import parse_qasm
 except ImportError:
     from backend.braket import run_braket
+    from backend.originq import run_originq
     from emitters.braket import emit_braket
+    from emitters.originq import emit_originq
     from parser import parse_qasm
 
 SUPPORTED_TARGETS = ("spinq", "originq", "braket")
@@ -24,7 +28,7 @@ def transpile(qasm_str: str, target: str) -> str:
     if target == "spinq":
         return qasm_str
     elif target == "originq":
-        return qasm_str
+        return emit_originq(circuit)
     elif target == "braket":
         return emit_braket(
             circuit,
@@ -41,6 +45,14 @@ def run(
     target: str,
     shots: int,
 ) -> Dict[str, Any]:
+    if target == "originq":
+        circuit = parse_qasm(qasm_str)
+        origin_ir = emit_originq(
+            circuit,
+            execution_compatible=True,
+        )
+        return run_originq(origin_ir, shots=shots)
+
     if target == "braket":
         circuit = parse_qasm(qasm_str)
 
