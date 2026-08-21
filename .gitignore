@@ -7,3 +7,4 @@ __pycache__/
 *.py[cod]
 .venv/
 starter_kit/report.json
+.spinq-venv/

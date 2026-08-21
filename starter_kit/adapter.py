@@ -10,14 +10,18 @@ from typing import Any, Dict, List, Tuple
 try:
     from .backend.braket import run_braket
     from .backend.originq import run_originq
+    from .backend.spinq import run_spinq
     from .emitters.braket import emit_braket
     from .emitters.originq import emit_originq
+    from .emitters.spinq import emit_spinq
     from .parser import parse_qasm
 except ImportError:
     from backend.braket import run_braket
     from backend.originq import run_originq
+    from backend.spinq import run_spinq
     from emitters.braket import emit_braket
     from emitters.originq import emit_originq
+    from emitters.spinq import emit_spinq
     from parser import parse_qasm
 
 SUPPORTED_TARGETS = ("spinq", "originq", "braket")
@@ -26,7 +30,7 @@ SUPPORTED_TARGETS = ("spinq", "originq", "braket")
 def transpile(qasm_str: str, target: str) -> str:
     circuit = parse_qasm(qasm_str)
     if target == "spinq":
-        return qasm_str
+        return emit_spinq(circuit)
     elif target == "originq":
         return emit_originq(circuit)
     elif target == "braket":
@@ -45,6 +49,20 @@ def run(
     target: str,
     shots: int,
 ) -> Dict[str, Any]:
+    if target == "spinq":
+        circuit = parse_qasm(qasm_str)
+        spinq_qasm = emit_spinq(circuit)
+        measurement_map = {
+            measurement.qubit: measurement.bit
+            for measurement in circuit.measurements
+        }
+        return run_spinq(
+            spinq_qasm,
+            shots=shots,
+            measurement_map=measurement_map,
+            num_bits=circuit.num_bits,
+        )
+
     if target == "originq":
         circuit = parse_qasm(qasm_str)
         origin_ir = emit_originq(
