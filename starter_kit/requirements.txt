@@ -3,3 +3,8 @@
 # amazon-braket-sdk==<tested-version>
 # spinqit==<tested-version>
 # pyqpanda==<tested-version>
+qiskit==2.5.2
+amazon-braket-sdk==1.110.1
+amazon-braket-default-simulator==1.33.0
+amazon-braket-schemas==1.28.0
+pytest==9.1.1
